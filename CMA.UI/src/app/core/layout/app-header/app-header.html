@@ -1,0 +1,7 @@
+<header class="flex h-(--header-height) items-center justify-between px-2 border-b">
+  <button hlmSidebarTrigger><span class="sr-only"></span></button>
+
+  <button hlmBtn size="icon" variant="outline" (click)="toggleDarkMode()">
+    <ng-icon [name]="isDarkMode ? 'lucideMoon' : 'lucideSun'" />
+  </button>
+</header>

@@ -1,12 +1,15 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HlmSidebarImports } from '@spartan-ng/helm/sidebar';
+import { AppSidebar } from './core/layout/app-sidebar/app-sidebar';
+import { AppHeader } from './core/layout/app-header/app-header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [AppSidebar, AppHeader, HlmSidebarImports, RouterOutlet],
+  host: {
+		class: 'block [--header-height:--spacing(14)]',
+	},
   templateUrl: './app.html',
-  styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('CMA.UI');
-}
+export class App { }

@@ -1,0 +1,45 @@
+<div hlmSidebarWrapper>
+  <hlm-sidebar collapsible="icon">
+
+    <!-- Header -->
+    <div hlmSidebarHeader>
+      <button hlmSidebarMenuButton size="lg">
+        <div class="grid flex-1 text-left text-sm leading-tight">
+          <span class="truncate font-medium">CMA</span>
+          <span class="truncate text-xs">Collect Monitor Act</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div hlmSidebarContent>
+      <div hlmSidebarGroup>
+        <div hlmSidebarGroupLabel>Application</div>
+        <div hlmSidebarGroupContent>
+          <ul hlmSidebarMenu>
+            @for (item of _items; track item.title) {
+              <li hlmSidebarMenuItem>
+                <a
+                  hlmSidebarMenuButton
+                  [routerLink]="item.url"
+                  routerLinkActive
+                  #rla="routerLinkActive"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  [isActive]="rla.isActive"
+                >
+                  <ng-icon hlm [name]="item.icon" />
+                  <span>{{ item.title }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div hlmSidebarFooter class="w-full text-center font-bold">1.0.0</div>
+  </hlm-sidebar>
+
+  <ng-content />
+</div>
