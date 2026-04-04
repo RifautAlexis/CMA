@@ -1,0 +1,131 @@
+<hlm-card>
+  <hlm-card-header>
+    <h3 hlmCardTitle>Devices</h3>
+    <p hlmCardDescription>Manage your devices and configurations.</p>
+  </hlm-card-header>
+  <div hlmCardContent class="flex flex-col gap-4">
+
+    <!-- TABLE ACTIONS -->
+    <app-table-actions [deviceToEdit]="_deviceToEdit()"></app-table-actions>
+
+    <!-- DATA TABLE -->
+    <div class="max-h-[700px] w-full overflow-auto rounded-md border">
+      <div hlmTableContainer>
+        <table hlmTable>
+          <thead hlmTHead>
+            @for (headerGroup of table.getHeaderGroups(); track headerGroup.id) {
+              <tr hlmTr>
+                @for (header of headerGroup.headers; track header.id) {
+                  <th hlmTh [attr.colSpan]="header.colSpan">
+                    @if (!header.isPlaceholder) {
+                      <ng-container
+                        *flexRender="
+                          header.column.columnDef.header;
+                          props: header.getContext();
+                          let headerText
+                        "
+                      >
+                        <div [innerHTML]="headerText"></div>
+                      </ng-container>
+                    }
+                  </th>
+                }
+              </tr>
+            }
+          </thead>
+          <tbody hlmTBody>
+            @for (row of table.getRowModel().rows; track row.id) {
+              <tr hlmTr [attr.key]="row.id" [attr.data-state]="row.getIsSelected() && 'selected'">
+                @for (cell of row.getVisibleCells(); track $index) {
+                  <td hlmTd>
+                    <ng-container
+                      *flexRender="cell.column.columnDef.cell; props: cell.getContext(); let cell"
+                    >
+                      <div [innerHTML]="cell"></div>
+                    </ng-container>
+                  </td>
+                }
+              </tr>
+            } @empty {
+              <tr hlmTr>
+                <td hlmTd class="h-24 text-center" [attr.colspan]="_columns.length">No results.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div class="flex flex-col justify-between sm:flex-row sm:items-center">
+      <span class="text-muted-foreground text-sm">
+        {{ table.getSelectedRowModel().rows.length }} of {{ table.getRowCount() }} row(s) selected
+      </span>
+      <div class="mt-2 flex gap-8 sm:mt-0">
+        <div class="flex gap-2">
+          <span hlmLabel>Row per page:</span>
+          <hlm-select
+            [ngModel]="table.getState().pagination.pageSize"
+            (ngModelChange)="table.setPageSize($event); table.resetPageIndex()"
+          >
+            <hlm-select-trigger size="sm" class="mr-1 inline-flex h-8 w-fit">
+              <hlm-select-value placeholder="{{ _currentPageSize() }}" />
+            </hlm-select-trigger>
+            <hlm-select-content *hlmSelectPortal>
+              <hlm-select-group>
+                @for (size of _availablePageSizes; track size) {
+                  <hlm-select-item [value]="size">
+                    {{ size }}
+                  </hlm-select-item>
+                }
+              </hlm-select-group>
+            </hlm-select-content>
+          </hlm-select>
+        </div>
+
+        <span hlmLabel
+          >Page {{ table.getState().pagination.pageIndex + 1 }} of {{ table.getPageCount() }}</span
+        >
+
+        <div class="flex space-x-1">
+          <button
+            size="icon-sm"
+            variant="outline"
+            hlmBtn
+            [disabled]="!table.getCanPreviousPage()"
+            (click)="table.firstPage()"
+          >
+            <ng-icon hlm name="lucideChevronsLeft" size="sm" />
+          </button>
+          <button
+            size="icon-sm"
+            variant="outline"
+            hlmBtn
+            [disabled]="!table.getCanPreviousPage()"
+            (click)="table.previousPage()"
+          >
+            <ng-icon hlm name="lucideChevronLeft" size="sm" />
+          </button>
+          <button
+            size="icon-sm"
+            variant="outline"
+            hlmBtn
+            [disabled]="!table.getCanNextPage()"
+            (click)="table.nextPage()"
+          >
+            <ng-icon hlm name="lucideChevronRight" size="sm" />
+          </button>
+          <button
+            size="icon-sm"
+            variant="outline"
+            hlmBtn
+            [disabled]="!table.getCanNextPage()"
+            (click)="table.lastPage()"
+          >
+            <ng-icon hlm name="lucideChevronsRight" size="sm" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</hlm-card>

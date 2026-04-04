@@ -12,7 +12,7 @@ import { classes } from '@spartan-ng/helm/utils';
       sideOffset: 6,
     }),
     provideBrnDialogDefaultOptions({
-      autoFocus: 'first-heading',
+      autoFocus: 'dialog',
     }),
   ],
   hostDirectives: [
