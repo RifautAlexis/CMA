@@ -1,0 +1,72 @@
+services:
+  api:
+    build:
+      context: ./backend/CMA.Api
+    container_name: cma-api
+    ports:
+      - "5000:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  collector:
+    build:
+      context: ./backend/CMA.Collector
+    container_name: cma-collector
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: ./CMA.UI
+    container_name: cma-ui
+    ports:
+      - "3000:80"
+
+  db:
+    image: postgres:17
+    container_name: cma-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    secrets:
+      - postgres_user
+      - postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  flyway:
+    image: flyway/flyway:10
+    container_name: cma-flyway
+    profiles:
+      - migration
+    entrypoint: ["sh", "-ec"]
+    command:
+      - 'flyway -url=jdbc:postgresql://db:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password="$$(cat /run/secrets/postgres_password)" -placeholders.app_env=${APP_ENV:-dev} -connectRetries=60 migrate'
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - postgres_user
+      - postgres_password
+    volumes:
+      - ./database:/flyway/sql:ro
+    restart: "no"
+
+volumes:
+  postgres_data:
+
+secrets:
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt

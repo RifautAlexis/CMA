@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMA.Adapters.Snmp", "CMA.Ad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMA.Core", "CMA.Core\CMA.Core.csproj", "{DA81B105-D708-4F03-98A9-6665BE6CE193}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMA.Api", "CMA.Api\CMA.Api.csproj", "{7FA3B09D-7553-4D82-95E1-0C56EF3C59A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{DA81B105-D708-4F03-98A9-6665BE6CE193}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA81B105-D708-4F03-98A9-6665BE6CE193}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA81B105-D708-4F03-98A9-6665BE6CE193}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FA3B09D-7553-4D82-95E1-0C56EF3C59A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FA3B09D-7553-4D82-95E1-0C56EF3C59A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FA3B09D-7553-4D82-95E1-0C56EF3C59A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FA3B09D-7553-4D82-95E1-0C56EF3C59A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
