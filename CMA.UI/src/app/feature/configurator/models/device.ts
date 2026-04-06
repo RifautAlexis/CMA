@@ -3,7 +3,6 @@ export interface Device {
     name: string;
     ipAddress: string;
     status: DeviceStatus;
-    lastActive: Date;
     createdAt: Date;
     updatedAt: Date;
 }
