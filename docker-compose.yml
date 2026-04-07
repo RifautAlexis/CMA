@@ -3,11 +3,19 @@ services:
     build:
       context: ./backend/CMA.Api
     container_name: cma-api
+    environment:
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     ports:
       - "5000:8080"
     depends_on:
       db:
         condition: service_healthy
+    secrets:
+      - postgres_password
 
   collector:
     build:
@@ -51,7 +59,7 @@ services:
       - migration
     entrypoint: ["sh", "-ec"]
     command:
-      - 'flyway -url=jdbc:postgresql://db:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password="$$(cat /run/secrets/postgres_password)" -placeholders.app_env=${APP_ENV:-dev} -connectRetries=60 migrate'
+      - 'flyway -url=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB} -user=${POSTGRES_USER} -password="$$(cat /run/secrets/postgres_password)" -placeholders.app_env=${APP_ENV:-dev} -connectRetries=60 migrate'
     depends_on:
       db:
         condition: service_healthy

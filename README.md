@@ -29,7 +29,7 @@ Copy-Item secrets/postgres_password.example secrets/postgres_password.txt
 ```
 
 2. Update your local values:
-- .env (set POSTGRES_DB, POSTGRES_USER, APP_ENV)
+- .env (set POSTGRES_DB, POSTGRES_USER, POSTGRES_HOST, POSTGRES_PORT, APP_ENV)
 - secrets/postgres_user.txt
 - secrets/postgres_password.txt
 
@@ -56,8 +56,11 @@ docker compose up --build api collector ui
 - API: http://localhost:5000
 - PostgreSQL: localhost:5432
 
-Note:
+Docker note:
 - .env and secrets/*.txt are git-ignored and must stay local.
+- `POSTGRES_HOST` and `POSTGRES_PORT` are used for container-to-container PostgreSQL access.
+- In Docker Compose, `POSTGRES_HOST=db` and `POSTGRES_PORT=5432`.
+- Tools running on your host machine still connect to PostgreSQL through `localhost:5432`.
 
 ## Project Structure
 
