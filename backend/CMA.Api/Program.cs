@@ -1,4 +1,3 @@
-using CMA.Api.Database;
 using Npgsql;
 using Wolverine;
 using Wolverine.Http;
@@ -15,7 +14,19 @@ builder.Host.UseWolverine(opts =>
 var connectionString = builder.Configuration.GetConnectionString("PostgreAdmin")
     ?? throw new InvalidOperationException("Connection string 'PostgreAdmin' is missing.");
 
-DatabaseMigrator.Run(connectionString);
+var postgresPasswordFile = builder.Configuration["POSTGRES_PASSWORD_FILE"];
+if (!string.IsNullOrWhiteSpace(postgresPasswordFile))
+{
+    var connectionStringBuilder = new NpgsqlConnectionStringBuilder(connectionString);
+
+    connectionStringBuilder.Host = builder.Configuration["POSTGRES_HOST"] ?? "db";
+    connectionStringBuilder.Port = int.TryParse(builder.Configuration["POSTGRES_PORT"], out var port) ? port : 5432;
+    connectionStringBuilder.Database = builder.Configuration["POSTGRES_DB"] ?? connectionStringBuilder.Database;
+    connectionStringBuilder.Username = builder.Configuration["POSTGRES_USER"] ?? connectionStringBuilder.Username;
+    connectionStringBuilder.Password = File.ReadAllText(postgresPasswordFile).Trim();
+
+    connectionString = connectionStringBuilder.ConnectionString;
+}
 
 builder.Services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
 

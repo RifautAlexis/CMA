@@ -8,7 +8,6 @@
 
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.1.72" />
-        <PackageReference Include="DbUp-PostgreSQL" Version="7.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
         <PackageReference Include="Npgsql" Version="10.0.1" />
         <PackageReference Include="WolverineFx" Version="5.27.0" />
@@ -17,10 +16,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\CMA.Core\CMA.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Include="Database\Scripts\*.sql" />
     </ItemGroup>
 
 </Project>

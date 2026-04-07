@@ -13,7 +13,7 @@ public class GetAllDevicesEndpoint
         await using var connection = await dataSource.OpenConnectionAsync();
 
         var result = await connection.QueryAsync<Device>(
-            "SELECT name, ip_address AS IpAddress FROM device ORDER BY name");
+            "SELECT name, ip_address AS IpAddress, created_at as CreatedAt, updated_at as UpdatedAt FROM device ORDER BY name");
 
         return result.ToList();
     }
