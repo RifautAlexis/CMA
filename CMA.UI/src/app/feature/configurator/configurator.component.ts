@@ -1,7 +1,7 @@
 import { HlmSelectImports } from './../../../../libs/ui/select/src/index';
 import { HlmTableImports } from './../../../../libs/ui/table/src/index';
 import { HlmCardImports } from './../../../../libs/ui/card/src/index';
-import { Component, signal, viewChild } from '@angular/core';
+import { Component, effect, inject, signal, viewChild } from '@angular/core';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -28,6 +28,7 @@ import { StatusDeviceBadge } from './components/status-device-badge';
 import { TableActions } from './components/table-actions';
 import { HlmIconImports } from '@spartan-ng/helm/icon';
 import { FormsModule } from '@angular/forms';
+import { HlmSpinnerImports } from '../../../../libs/ui/spinner/src/index';
 import { provideIcons } from '@ng-icons/core';
 import {
   lucideChevronsLeft,
@@ -36,6 +37,9 @@ import {
   lucideChevronsRight,
   lucidePlus,
 } from '@ng-icons/lucide';
+import { ConfiguratorStore } from './services/configurator-store';
+import { ConfiguratorHttp } from './services/configurator-http';
+import { StoreStatus } from '@shared/models/store-status';
 
 @Component({
   templateUrl: './configurator.component.html',
@@ -47,8 +51,11 @@ import {
     HlmIconImports,
     HlmSelectImports,
     FormsModule,
+    HlmSpinnerImports,
   ],
   providers: [
+    ConfiguratorHttp,
+    ConfiguratorStore,
     provideIcons({
       lucideChevronsLeft,
       lucideChevronLeft,
@@ -62,6 +69,10 @@ import {
   },
 })
 export class ConfiguratorComponent {
+  private readonly _configuratorStore = inject(ConfiguratorStore);
+  protected readonly _storeStatus = StoreStatus;
+  protected readonly _status = this._configuratorStore.status;
+
   private readonly _tableActions = viewChild(TableActions);
 
   protected readonly _deviceToEdit = signal<Device | undefined>(undefined);
@@ -145,7 +156,7 @@ export class ConfiguratorComponent {
   ];
 
   readonly table = createAngularTable<Device>(() => ({
-    data: DEVICE_LIST,
+    data: this._configuratorStore.devices(),
     columns: this._columns,
     state: {
       sorting: this._sorting(),
@@ -174,6 +185,12 @@ export class ConfiguratorComponent {
 			updater instanceof Function ? this._pagination.update(updater) : this._pagination.set(updater);
 		},
   }));
+
+  constructor() {
+    // effect(() => {
+    //   const devices = this._configuratorStore.devices();
+    // });
+  }
 
   private editDevice(device: Device): void {
     this._tableActions()?.openSheet(device);
