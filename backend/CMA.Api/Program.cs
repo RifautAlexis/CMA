@@ -6,13 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Host.UseWolverine(opts =>
-{
-    opts.Durability.Mode = DurabilityMode.MediatorOnly;
-});
+builder.Host.UseWolverine(opts => { opts.Durability.Mode = DurabilityMode.MediatorOnly; });
 
 var connectionString = builder.Configuration.GetConnectionString("PostgreAdmin")
-    ?? throw new InvalidOperationException("Connection string 'PostgreAdmin' is missing.");
+                       ?? throw new InvalidOperationException("Connection string 'PostgreAdmin' is missing.");
 
 var postgresPasswordFile = builder.Configuration["POSTGRES_PASSWORD_FILE"];
 if (!string.IsNullOrWhiteSpace(postgresPasswordFile))
@@ -30,6 +27,32 @@ if (!string.IsNullOrWhiteSpace(postgresPasswordFile))
 
 builder.Services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
 
+builder.Services.AddCors(options =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    }
+    else
+    {
+        var allowedOrigins = builder.Configuration
+            .GetSection("Cors:AllowedOrigins")
+            .Get<string[]>() ?? [];
+
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    }
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -46,9 +69,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthorization();
 
 // Let's add in Wolverine HTTP endpoints to the routing tree
-app.MapWolverineEndpoints();
+app.MapGroup("api").MapWolverineEndpoints();
 
 app.Run();
