@@ -1,5 +1,6 @@
 CREATE TABLE device (
-	ip_address TEXT PRIMARY KEY,
+	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+	ip_address TEXT NOT NULL UNIQUE,
 	name TEXT NOT NULL,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
