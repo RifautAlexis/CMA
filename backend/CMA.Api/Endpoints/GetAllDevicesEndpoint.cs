@@ -12,7 +12,7 @@ public class GetAllDevicesEndpoint
         await using var connection = await dataSource.OpenConnectionAsync();
 
         var result = await connection.QueryAsync<GetAllDevicesResponse>(
-            "SELECT name, ip_address AS IpAddress, created_at as CreatedAt, updated_at as UpdatedAt FROM device ORDER BY name");
+            "SELECT id AS Id, name, ip_address AS IpAddress, created_at as CreatedAt, updated_at as UpdatedAt FROM device ORDER BY name");
 
         return result.ToList();
     }
@@ -20,6 +20,7 @@ public class GetAllDevicesEndpoint
 
 public class GetAllDevicesResponse
 {
+    public Guid Id { get; init; }
     public required string Name { get; init; }
     public required string IpAddress { get; init; }
     public DateTime CreatedAt { get; init; }

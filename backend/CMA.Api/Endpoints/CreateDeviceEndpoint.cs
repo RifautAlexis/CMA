@@ -15,7 +15,7 @@ public class CreateDeviceEndpoint
             """
             INSERT INTO device (name, ip_address)
             VALUES (@Name, @IpAddress)
-            RETURNING name, ip_address AS IpAddress, created_at AS CreatedAt, updated_at AS UpdatedAt;
+            RETURNING id AS Id, name, ip_address AS IpAddress, created_at AS CreatedAt, updated_at AS UpdatedAt;
             """,
             new
             {
@@ -35,6 +35,7 @@ public class CreateDeviceRequest
 
 public class CreateDeviceResponse
 {
+    public Guid Id { get; init; }
     public required string Name { get; init; }
     public required string IpAddress { get; init; }
     public DateTime CreatedAt { get; init; }

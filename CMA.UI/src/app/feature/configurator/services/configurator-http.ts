@@ -4,7 +4,7 @@ import { Device } from '../models/device';
 import { Observable } from 'rxjs';
 import { CreateDeviceRequest, CreateDeviceResponse } from '../models/create-device';
 import { UpdateDeviceRequest, UpdateDeviceResponse } from '../models/update-device';
-import { BulkDeleteDeviceByIpRequest, BulkDeleteDevicesByIpResponse, DeleteDeviceByIpResponse } from '../models/delete-device';
+import { BulkDeleteDeviceByIdsRequest, BulkDeleteDevicesByIdsResponse, DeleteDeviceByIdResponse,  } from '../models/delete-device';
 
 @Injectable()
 export class ConfiguratorHttp {
@@ -19,14 +19,18 @@ export class ConfiguratorHttp {
     }
 
     updateDevice(id: string, deviceToUpdate: UpdateDeviceRequest): Observable<UpdateDeviceResponse> {
-        return this._httpClient.put<UpdateDeviceResponse>(`/devices/${id}`, deviceToUpdate);
+        return this._httpClient.patch<UpdateDeviceResponse>(`/devices/${id}`, deviceToUpdate);
     }
 
-    deleteAllSelectedDevices(bulkDeleteDeviceByIpRequest: BulkDeleteDeviceByIpRequest): Observable<BulkDeleteDevicesByIpResponse> {
-        return this._httpClient.delete<BulkDeleteDevicesByIpResponse>('/devices', { body: bulkDeleteDeviceByIpRequest });
+    deleteAllSelectedDevices(bulkDeleteDeviceByIpRequest: BulkDeleteDeviceByIdsRequest): Observable<BulkDeleteDevicesByIdsResponse> {
+        return this._httpClient.delete<BulkDeleteDevicesByIdsResponse>('/devices', { body: bulkDeleteDeviceByIpRequest });
     }
 
-    deleteDeviceById(id: string): Observable<DeleteDeviceByIpResponse> {
-        return this._httpClient.delete<DeleteDeviceByIpResponse>(`/devices/${id}`);
+    deleteDeviceById(id: string): Observable<DeleteDeviceByIdResponse> {
+        return this._httpClient.delete<DeleteDeviceByIdResponse>(`/devices/${id}`);
+    }
+
+    ValidateDeviceIpUniqueness(ipAddress: string): Observable<{ isUnique: boolean }> {
+        return this._httpClient.get<{ isUnique: boolean }>(`/devices/ip-address/unique?ipAddress=${encodeURIComponent(ipAddress)}`);
     }
 }

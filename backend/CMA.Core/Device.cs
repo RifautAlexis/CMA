@@ -2,6 +2,7 @@ namespace CMA.Core;
 
 public class Device
 {
+    public Guid Id { get; init; }
     public required string Name { get; init; }
     public required string IpAddress { get; init; }
     public DateTime CreatedAt { get; init; }

@@ -6,7 +6,7 @@
   <div hlmCardContent class="flex flex-col gap-4">
 
     <!-- TABLE ACTIONS -->
-    <app-table-actions [deviceToEdit]="_deviceToEdit()"></app-table-actions>
+    <app-table-actions [deviceToEdit]="_deviceToEdit()" (deviceCreated)="createDevice($event)" (deviceUpdated)="updateDevice($event)" />
 
     <!-- DATA TABLE -->
     <div class="max-h-[700px] w-full overflow-auto rounded-md border">

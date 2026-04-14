@@ -4,7 +4,7 @@ export const configuratorRoutes: Routes = [
     {
         path: '',
         loadComponent() {
-            return import('./configurator.component').then(m => m.ConfiguratorComponent);
+            return import('./configurator').then(m => m.ConfiguratorComponent);
         },
     },
 ];

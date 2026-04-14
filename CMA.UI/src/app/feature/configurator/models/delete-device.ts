@@ -1,16 +1,16 @@
-export interface DeleteDeviceByIpRequest {}
+export interface DeleteDeviceByIdRequest {}
 
-export interface DeleteDeviceByIpResponse {
+export interface DeleteDeviceByIdResponse {
     name: string;
     ipAddress: string;
     createdAt: string;
     updatedAt: string;
 }
 
-export interface BulkDeleteDeviceByIpRequest {
-    ipAddress: string;
+export interface BulkDeleteDeviceByIdsRequest {
+    ids: string[];
 }
 
-export interface BulkDeleteDevicesByIpResponse {
+export interface BulkDeleteDevicesByIdsResponse {
     deletedCount: number;
 }

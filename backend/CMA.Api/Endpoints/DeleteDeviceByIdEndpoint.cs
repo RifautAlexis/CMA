@@ -1,4 +1,3 @@
-using CMA.Core;
 using Dapper;
 using Npgsql;
 using Wolverine.Http;
@@ -7,18 +6,18 @@ namespace CMA.Api.Endpoints;
 
 public class DeleteDeviceByIpAddressEndpoint
 {
-    [WolverineDelete("/devices/{ipAddress}")]
-    public static async Task<IResult> DeleteDeviceByIpAddress(string ipAddress, NpgsqlDataSource dataSource)
+    [WolverineDelete("/devices/{id}")]
+    public static async Task<IResult> DeleteDeviceByIpAddress(Guid id, NpgsqlDataSource dataSource)
     {
         await using var connection = await dataSource.OpenConnectionAsync();
 
         var deletedDevice = await connection.QuerySingleOrDefaultAsync<DeleteDeviceByIpAddressResponse>(
             """
             DELETE FROM device
-            WHERE ip_address = @IpAddress
-            RETURNING name, ip_address AS IpAddress, created_at AS CreatedAt, updated_at AS UpdatedAt;
+            WHERE id = @Id
+            RETURNING id AS Id, name, ip_address AS IpAddress, created_at AS CreatedAt, updated_at AS UpdatedAt;
             """,
-            new { IpAddress = ipAddress });
+            new { Id = id });
 
         return deletedDevice is null ? Results.NotFound() : Results.Ok(deletedDevice);
     }
@@ -26,6 +25,7 @@ public class DeleteDeviceByIpAddressEndpoint
 
 public class DeleteDeviceByIpAddressResponse
 {
+    public Guid Id { get; init; }
     public required string Name { get; init; }
     public required string IpAddress { get; init; }
     public DateTime CreatedAt { get; init; }

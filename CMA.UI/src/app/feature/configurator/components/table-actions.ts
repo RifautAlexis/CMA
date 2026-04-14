@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild, OnInit, input } from '@angular/core';
+import { Component, inject, input, output, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -30,10 +30,11 @@ import { HlmInput } from '@spartan-ng/helm/input';
 import { HlmPopoverImports } from '@spartan-ng/helm/popover';
 import { DeviceStatusPipe } from '../pipes/device-status.pipe';
 import { Device, DeviceStatus } from '../models/device';
-import { ConfiguratorComponent } from '../configurator.component';
+import { ConfiguratorComponent } from '../configurator';
 import { StatusDeviceBadge } from './status-device-badge';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { CreateEditDeviceComponent } from './create-edit-device';
+import { CreateDeviceRequest } from '../models/create-device';
 
 @Component({
   selector: 'app-table-actions',
@@ -174,11 +175,17 @@ import { CreateEditDeviceComponent } from './create-edit-device';
         </button>
       </div>
     </div>
-    <app-create-edit-device></app-create-edit-device>
+    <app-create-edit-device
+      (deviceCreated)="createDevice($event)"
+      (deviceUpdated)="updateDevice($event)"
+    />
   `,
 })
 export class TableActions {
   private readonly _tableComponent = inject(ConfiguratorComponent);
+
+  protected readonly deviceCreated = output<CreateDeviceRequest>();
+  protected readonly deviceUpdated = output<Device>();
 
   public readonly viewChildSheetRef = viewChild(CreateEditDeviceComponent);
   public readonly deviceToEdit = input<Device | undefined>(undefined);
@@ -226,5 +233,13 @@ export class TableActions {
   resetFilters(): void {
     this._statusFilter.set([]);
     this._table.resetColumnFilters();
+  }
+
+  protected createDevice(device: CreateDeviceRequest): void {
+    this.deviceCreated.emit(device);
+  }
+
+  protected updateDevice(device: Device): void {
+    this.deviceUpdated.emit(device);
   }
 }
