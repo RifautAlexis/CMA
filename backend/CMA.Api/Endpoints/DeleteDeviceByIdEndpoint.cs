@@ -4,14 +4,14 @@ using Wolverine.Http;
 
 namespace CMA.Api.Endpoints;
 
-public class DeleteDeviceByIpAddressEndpoint
+public class DeleteDeviceByIdEndpoint
 {
     [WolverineDelete("/devices/{id}")]
-    public static async Task<IResult> DeleteDeviceByIpAddress(Guid id, NpgsqlDataSource dataSource)
+    public static async Task<IResult> DeleteDeviceById(Guid id, NpgsqlDataSource dataSource)
     {
         await using var connection = await dataSource.OpenConnectionAsync();
 
-        var deletedDevice = await connection.QuerySingleOrDefaultAsync<DeleteDeviceByIpAddressResponse>(
+        var deletedDevice = await connection.QuerySingleOrDefaultAsync<DeleteDeviceByIdResponse>(
             """
             DELETE FROM device
             WHERE id = @Id
@@ -23,7 +23,7 @@ public class DeleteDeviceByIpAddressEndpoint
     }
 }
 
-public class DeleteDeviceByIpAddressResponse
+public class DeleteDeviceByIdResponse
 {
     public Guid Id { get; init; }
     public required string Name { get; init; }

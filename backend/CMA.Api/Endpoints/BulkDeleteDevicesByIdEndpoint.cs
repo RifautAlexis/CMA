@@ -4,42 +4,42 @@ using Wolverine.Http;
 
 namespace CMA.Api.Endpoints;
 
-public class BulkDeleteDevicesByIpEndpoint
+public class BulkDeleteDevicesByIdEndpoint
 {
     [WolverineDelete("/devices")]
-    public static async Task<BulkDeleteDevicesByIpResponse> BulkDeleteDevicesByIp(
-        IReadOnlyList<DeleteDeviceByIpRequest> devices,
+    public static async Task<BulkDeleteDeviceByIdsResponse> BulkDeleteDeviceByIds(
+        DeleteDeviceByIdsRequest request,
         NpgsqlDataSource dataSource)
     {
-        if (devices.Count == 0)
+
+        var ids = request.Ids
+            .Distinct()
+            .ToArray();
+        
+        if (ids.Length == 0)
         {
-            return new BulkDeleteDevicesByIpResponse { DeletedCount = 0 };
+            return new BulkDeleteDeviceByIdsResponse { DeletedCount = 0 };
         }
 
         await using var connection = await dataSource.OpenConnectionAsync();
 
-        var ipAddresses = devices
-            .Select(x => x.IpAddress)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-
         var deletedCount = await connection.ExecuteAsync(
-            "DELETE FROM device WHERE ip_address = ANY(@IpAddresses);",
-            new { IpAddresses = ipAddresses });
+            "DELETE FROM device WHERE id = ANY(@Ids);",
+            new { Ids = ids });
 
-        return new BulkDeleteDevicesByIpResponse
+        return new BulkDeleteDeviceByIdsResponse
         {
             DeletedCount = deletedCount,
         };
     }
 }
 
-public class DeleteDeviceByIpRequest
+public class DeleteDeviceByIdsRequest
 {
-    public required string IpAddress { get; init; }
+    public required Guid[] Ids { get; init; }
 }
 
-public class BulkDeleteDevicesByIpResponse
+public class BulkDeleteDeviceByIdsResponse
 {
     public int DeletedCount { get; init; }
 }
