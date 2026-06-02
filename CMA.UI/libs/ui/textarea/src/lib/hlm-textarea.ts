@@ -9,7 +9,7 @@ export const textareaVariants = cva(
   {
     variants: {
       error: {
-        auto: 'data-[matches-=true]:border-destructive data-[matches-=true]:ring-destructive/20 dark:data-[matches-=true]:ring-destructive/40',
+        auto: 'data-[matches-spartan-invalid=true]:border-destructive data-[matches-spartan-invalid=true]:ring-destructive/20 dark:data-[matches-spartan-invalid=true]:ring-destructive/40',
         true: 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
       },
     },

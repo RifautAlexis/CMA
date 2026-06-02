@@ -85,3 +85,7 @@ Docker note:
 - "docker is not recognized": install Docker Desktop and restart terminal.
 - Migration fails due to connection: ensure db is healthy before running Flyway.
 - Flyway checksum mismatch: do not edit already-applied migration files; create a new V{n} file instead.
+  - If in Development environment : docker volume rm cma_postgres_data
+
+## Improvements
+- CMA.Collector : Implement a system in case of DB failure

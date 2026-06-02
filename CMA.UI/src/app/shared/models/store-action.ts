@@ -2,7 +2,7 @@ export enum StoreAction {
     Idle,
     Load,
     Create,
-    Update,
+    Edit,
     Delete,
     DeleteMultiple,
 }

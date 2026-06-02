@@ -1,37 +1,61 @@
 using CMA.Core;
+using Lextm.SharpSnmpLib;
+using Lextm.SharpSnmpLib.Messaging;
+using System.Net;
 
 namespace CMA.Adapters.Snmp;
 
-public interface ISnmpAdapter
+public sealed class SnmpAdapter : IDeviceAdapter
 {
-    Task<string> CollectAsync();
-    bool AddDevice(Device device);
-}
+    public bool CanPoll(Device device) => device.Snmp is not null;
 
-public class SnmpAdapter: ISnmpAdapter
-{
-    private readonly ISet<Device> _devices = new HashSet<Device>();
-    
-    Task<string> ISnmpAdapter.CollectAsync()
-    {
-        // Simulate SNMP data collection
-        return Task.FromResult("SNMP data collected successfully.");
-    }
-
-    bool ISnmpAdapter.AddDevice(Device device)
+    public Task<AdapterPollResult> PollAsync(Device device, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(device);
+        var settings = device.Snmp;
 
-        if (string.IsNullOrWhiteSpace(device.IpAddress))
+        if (settings is null)
         {
-            throw new ArgumentException("Device IP address is required.", nameof(device));
+            return Task.FromResult(AdapterPollResult.Failed(device.Id, "SNMP settings are missing."));
         }
 
-        var isAdded = _devices.Add(device);
-        Console.WriteLine(isAdded
-            ? $"Device {device.Name} added to SNMP adapter."
-            : $"Device {device.Name} is already in the SNMP adapter.");
-        
-        return isAdded;
+        if (!IPAddress.TryParse(device.IpAddress.Trim(), out var ipAddress))
+        {
+            return Task.FromResult(AdapterPollResult.Failed(device.Id, "Invalid IP address."));
+        }
+
+        try
+        {
+            var endpoint = new IPEndPoint(ipAddress, settings.Port);
+            var variables = new List<Variable>();
+            var community = new OctetString(string.IsNullOrWhiteSpace(settings.Community) ? "public" : settings.Community);
+            var rootOid = new ObjectIdentifier(string.IsNullOrWhiteSpace(settings.WalkOid) ? "1.3.6.1.2.1" : settings.WalkOid);
+            var version = ParseVersion(settings.Version);
+
+            Messenger.Walk(
+                version,
+                endpoint,
+                community,
+                rootOid,
+                variables,
+                timeout: 5000,
+                mode: WalkMode.WithinSubtree);
+
+            return Task.FromResult(AdapterPollResult.Succeeded(device.Id, $"SNMP walk succeeded ({variables.Count} OIDs)."));
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult(AdapterPollResult.Failed(device.Id, $"SNMP walk failed: {ex.Message}"));
+        }
+    }
+
+    private static VersionCode ParseVersion(string? version)
+    {
+        return version?.Trim().ToLowerInvariant() switch
+        {
+            "v1" => VersionCode.V1,
+            "v3" => VersionCode.V3,
+            _ => VersionCode.V2,
+        };
     }
 }

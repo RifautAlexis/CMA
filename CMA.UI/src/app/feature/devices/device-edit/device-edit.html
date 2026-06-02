@@ -1,0 +1,152 @@
+<hlm-tabs tab="general-information">
+  <hlm-tabs-list aria-label="Device settings tabs">
+    <button hlmTabsTrigger="general-information">General Information</button>
+    <button hlmTabsTrigger="snmp-settings">SNMP Settings</button>
+  </hlm-tabs-list>
+
+  <section hlmCard>
+    <div hlmCardContent>
+      <form id="form-create" (ngSubmit)="submit()">
+        <div hlmTabsContent="general-information">
+          <!-- General Information -->
+          <fieldset hlmFieldSet>
+            <legend hlmFieldLegend>General Information</legend>
+            <p hlmFieldDescription>Provide the general information for the new device.</p>
+            <div hlmFieldGroup>
+              <div hlmField>
+                <label hlmFieldLabel for="device-name">Name</label>
+                <input
+                  hlmInput
+                  id="device-name"
+                  type="text"
+                  placeholder="Enter device name"
+                  [formField]="deviceEditForm.generalInformation.name"
+                />
+                @for (error of deviceEditForm.generalInformation.name().errors(); track error) {
+                  <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+                }
+              </div>
+              <div hlmField>
+                <label hlmFieldLabel for="ipAddress">IP Address</label>
+                <input
+                  hlmInput
+                  id="ipAddress"
+                  type="text"
+                  placeholder="Enter device IP address"
+                  [formField]="deviceEditForm.generalInformation.ipAddress"
+                />
+                @for (
+                  error of deviceEditForm.generalInformation.ipAddress().errors();
+                  track error
+                ) {
+                  <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+                }
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- SNMP Settings -->
+        <div hlmTabsContent="snmp-settings">
+          <!-- General SNMP Settings -->
+          <fieldset hlmFieldSet>
+            <legend hlmFieldLegend>General SNMP Settings</legend>
+            <p hlmFieldDescription>Provide the general SNMP settings for the new device.</p>
+
+            <div hlmField orientation="horizontal">
+              <label hlmLabel for="snmpEnabled">Enable SNMP</label>
+              <hlm-checkbox
+                id="snmpEnabled"
+                [formField]="deviceEditForm.generalInformation.isSnmpEnabled"
+              />
+            </div>
+
+            <div hlmFieldGroup>
+              <div hlmField>
+                <label hlmFieldLabel for="snmp-port">Port</label>
+                <input
+                  hlmInput
+                  id="snmp-port"
+                  type="number"
+                  placeholder="0 - 255"
+                  [formField]="deviceEditForm.snmpSetting.snmpPort"
+                />
+                @for (error of deviceEditForm.snmpSetting.snmpPort().errors(); track error) {
+                  <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+                }
+              </div>
+              <div hlmField>
+                <label hlmFieldLabel for="snmp-version">Version</label>
+                <hlm-select
+                  [formField]="deviceEditForm.snmpSetting.snmpVersion"
+                  [itemToString]="numberToString"
+                >
+                  <hlm-select-trigger class="w-full" buttonId="snmp-version">
+                    <hlm-select-value placeholder="Choose a SNMP version" />
+                  </hlm-select-trigger>
+                  <hlm-select-content *hlmSelectPortal>
+                    <hlm-select-group>
+                      @for (version of snmpVersionOptions; track version.value) {
+                        <hlm-select-item [value]="version.value">
+                          {{ version.label }}
+                        </hlm-select-item>
+                      }
+                    </hlm-select-group>
+                  </hlm-select-content>
+                </hlm-select>
+                @for (error of deviceEditForm.snmpSetting.snmpVersion().errors(); track error) {
+                  <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+                }
+              </div>
+            </div>
+            <div hlmField>
+              <label hlmFieldLabel for="mib2Branch">Port</label>
+              <input
+                hlmInput
+                id="mib2Branch"
+                type="text"
+                placeholder=".1.3.6.1.2.1"
+                [formField]="deviceEditForm.snmpSetting.mib2Branch"
+              />
+              @for (error of deviceEditForm.snmpSetting.mib2Branch().errors(); track error) {
+                <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+              }
+            </div>
+            <div hlmField>
+              <label hlmFieldLabel for="readCommunity">Read Community</label>
+              <input
+                hlmInput
+                id="readCommunity"
+                type="text"
+                placeholder="public"
+                [formField]="deviceEditForm.snmpSetting.readCommunity"
+              />
+              @for (error of deviceEditForm.snmpSetting.readCommunity().errors(); track error) {
+                <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+              }
+            </div>
+            <div hlmField>
+              <label hlmFieldLabel for="writeCommunity">Write Community</label>
+              <input
+                hlmInput
+                id="writeCommunity"
+                type="text"
+                placeholder="private"
+                [formField]="deviceEditForm.snmpSetting.writeCommunity"
+              />
+              @for (error of deviceEditForm.snmpSetting.writeCommunity().errors(); track error) {
+                <hlm-field-error [validator]="error.kind">{{ error.message }}</hlm-field-error>
+              }
+            </div>
+          </fieldset>
+        </div>
+      </form>
+    </div>
+    <div hlmCardFooter class="flex-row justify-end gap-2">
+      <button hlmBtn type="submit" form="form-create" [disabled]="deviceEditForm().invalid()">
+        Create Device
+      </button>
+      <button hlmBtn variant="outline" [routerLink]="['/devices']">Cancel</button>
+    </div>
+  </section>
+</hlm-tabs>

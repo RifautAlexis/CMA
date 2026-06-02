@@ -30,7 +30,7 @@ export class HlmInputGroup {
       'has-[>[data-align=block-end]]:h-auto has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-end]]:[&>input]:pt-3',
       'has-[[data-slot=input-group-control]:focus-visible]:ring-[3px]',
       this._spartanInvalid?.()
-        ? 'has-[>[data-matches-=true]]:ring-destructive/20 has-[>[data-matches-=true]]:border-destructive dark:has-[>[data-matches-=true]]:ring-destructive/40'
+        ? 'has-[>[data-matches-spartan-invalid=true]]:ring-destructive/20 has-[>[data-matches-spartan-invalid=true]]:border-destructive dark:has-[>[data-matches-spartan-invalid=true]]:ring-destructive/40'
         : 'has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50',
     ]);
   }

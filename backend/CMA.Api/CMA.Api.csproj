@@ -18,4 +18,15 @@
       <ProjectReference Include="..\CMA.Core\CMA.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="..\CMA.Core\appsettings.Shared.json" Link="appsettings.Shared.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+      <Content Include="..\CMA.Core\appsettings.Development.Shared.json" Link="appsettings.Development.Shared.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

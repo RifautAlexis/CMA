@@ -1,3 +1,4 @@
+using CMA.Core;
 using Npgsql;
 using Wolverine;
 using Wolverine.Http;
@@ -5,11 +6,17 @@ using Wolverine.Http;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var basePath = AppContext.BaseDirectory;
+var environmentName = builder.Environment.EnvironmentName;
+
+builder.Configuration
+    .AddJsonFile(Path.Combine(basePath, "appsettings.Shared.json"), optional: false, reloadOnChange: true)
+    .AddJsonFile(Path.Combine(basePath, $"appsettings.{environmentName}.Shared.json"), optional: true, reloadOnChange: true);
 
 builder.Host.UseWolverine(opts => { opts.Durability.Mode = DurabilityMode.MediatorOnly; });
 
-var connectionString = builder.Configuration.GetConnectionString("PostgreAdmin")
-                       ?? throw new InvalidOperationException("Connection string 'PostgreAdmin' is missing.");
+var connectionString = builder.Configuration.GetConnectionString("PostgresAdmin")
+                       ?? throw new InvalidOperationException("Connection string 'PostgresAdmin' is missing.");
 
 var postgresPasswordFile = builder.Configuration["POSTGRES_PASSWORD_FILE"];
 if (!string.IsNullOrWhiteSpace(postgresPasswordFile))
@@ -26,6 +33,9 @@ if (!string.IsNullOrWhiteSpace(postgresPasswordFile))
 }
 
 builder.Services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
+builder.Services.AddSingleton<PostgresDeviceRepository>();
+builder.Services.AddSingleton<IDeviceQueryRepository>(sp => sp.GetRequiredService<PostgresDeviceRepository>());
+builder.Services.AddSingleton<IDeviceCommandRepository>(sp => sp.GetRequiredService<PostgresDeviceRepository>());
 
 builder.Services.AddCors(options =>
 {
@@ -54,7 +64,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddWolverineHttp();

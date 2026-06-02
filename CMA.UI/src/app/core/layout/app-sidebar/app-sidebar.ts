@@ -25,8 +25,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class AppSidebar {
   protected readonly _items = [
     {
-      title: 'Configurator',
-      url: '/configurator',
+      title: 'Devices',
+      url: '/devices',
       icon: 'lucideHouse',
     },
   ];
